@@ -6,12 +6,15 @@ def get_contracts_by_region(region: str) -> list:
         "Skellige": ["drowner", "leshen"],
         "Blaviken": ["vampire", "griffin"]
     }
-    pass
+    if region in all_contracts:
+        return all_contracts[region]
+    else:
+        return []
 
 
 # 2-) reward değeri şu formül ile hesaplanır. FORMULA = base_gold X (1 + difficulty X 0.1)
 def calculate_reward(base_gold: int, difficulty: int) -> float:
-    pass
+        return base_gold * (1 + difficulty * 0.1)
 
 
 # 3-) monster_name değerini weaknesses dictionary key değeri ile eşleşri ve karşısındaki list değerini return et.
@@ -22,19 +25,32 @@ def get_monster_weakness(monster_name: str) -> list:
         "griffin": ["hybrid oil", "aard"],
         "vampire": ["moon dust", "devil's puffball"]
     }
-    pass
+    monster_name = monster_name.strip().lower()
+
+    if monster_name in weaknesses:
+        return weaknesses[monster_name]
+    else:
+        return []
 
 
 # 4-) difficulty değeri 5'ten büyükse veya region 'Blaviken' ise bu fonksiyon 'True' dönmelidir. Diğer şartlarda fonksiyon 'False' dönmelidir.
 def is_high_danger_contract(difficulty: int, region: str) -> bool:
-    pass
+    return difficulty > 5 or region == "Blaviken"
 
 
 # 5-) Example inputtaki gibi bir liste monsters parametresi ile birlikte gelecektir. Bu listedeki her bir eleman ve kaç adet geççtiği bir dictionar olarak geri dönülecektir.
 # Example input: ['ghoul', 'leshen', 'ghoul', 'drowner', 'leshen', 'ghoul']
 # Output: {'ghoul': 3, 'leshen': 2, 'drowner': 1}
 def summarize_monster_data(monsters: list) -> dict:
-    pass
+    monster_counts = {}
+
+    for monster in monsters:
+        if monster in monster_counts:
+            monster_counts[monster] = monster_counts[monster] + 1
+        else:
+            monster_counts[monster] = 1
+
+    return monster_counts
 
 
 # 6-) contracts gibi bir list parametre olarak gelecektir. min_rewar değeri her bir contract için reward değerinden büyükse o elemanlar bir list olarak döneceklerdir.
@@ -46,14 +62,30 @@ def summarize_monster_data(monsters: list) -> dict:
     # ]
 #  Output: only contracts with reward >= min_reward
 def filter_contracts_by_reward(contracts: list, min_reward: int) -> list:
-    pass
+    result = []
+
+    for contract in contracts:
+        if contract["reward"] >= min_reward:
+            result.append(contract)
+
+    return result
 
 
 # 7-) Aşağıdaki listedeki gibi en sık görülen eleman listede bulunup return edilmelidir
 # Example input: ['ghoul', 'ghoul', 'leshen', 'drowner', 'ghoul']
 # Output: 'ghoul'
 def get_most_common_monster(monster_list: list) -> str:
-    pass
+    most_common = monster_list[0]
+    highest_count = monster_list.count(most_common)
+
+    for monster in monster_list:
+        current_count = monster_list.count(monster)
+
+        if current_count > highest_count:
+            most_common = monster
+            highest_count = current_count
+
+    return most_common
 
 
 # 8-) Aşağıdaki gibi bir contracts listesi parametre olarak alınacaktır. liste difficulty değerine göre küçükten büyüğe göre sıralanarak geri dönecektir.
@@ -63,14 +95,16 @@ def get_most_common_monster(monster_list: list) -> str:
 #     {"id": 3, "monster": "drowner", "difficulty": 1}
 # ]
 def sort_contracts_by_difficulty(contracts: list) -> list:
-    pass
+    sorted_contracts = sorted(contracts, key=lambda contract: contract["difficulty"])
+    return sorted_contracts
 
 
 # 9-) Witcher adılığı ödüle yaptığı indirim sonrasında alması gereken ücreti hesaplamaktadır.
 # reward parametresi orijanl fiyatı, lambda discont ise yapılcak olan indirimi lmabda fonksiyonu olarak alır.
 # bu işlemi yapıp en son fiyatı dönen fonksiyonu yazınız.  
 def apply_discount(reward: float, lambda_discount) -> float:
-    pass
+    discounted_reward = lambda_discount(reward)
+    return discounted_reward
 
 
 #10-) Görevin her bir bölgede toplamda ne kadar contract olduğunu bulmaktır.
@@ -82,4 +116,14 @@ def apply_discount(reward: float, lambda_discount) -> float:
 #     {"id": 4, "region": "Novigrad"}
 # ]
 def count_contracts_by_region(contracts: list) -> dict:
-    pass
+    region_counts = {}
+
+    for contract in contracts:
+        region = contract["region"]
+
+        if region in region_counts:
+            region_counts[region] += 1
+        else:
+            region_counts[region] = 1
+
+    return region_counts
